@@ -1,41 +1,28 @@
-// Get HTML elements 
+//  Get HTML elements 
 var list = document.querySelector('#task-list');
 var input = document.querySelector('#task-input');
 var addBtn = document.querySelector('#add-btn');
 
-// Create a task <li> element
+//  Create a task <li> element 
 function createTaskElement(task) {
-    // task is an object: { id: 1, title: "Buy milk", done: 0 }
+    var li = document.createElement('li');
+    li.dataset.id = task.id;
+    li.textContent = task.title;
 
-    var li = document.createElement('li');   // Create new <li> tag
-    li.dataset.id = task.id;    /*li你刚才创建的变量名, .dataset系统自带用来设置 data-xxx 属性, 
-                                .id (左边)你自己写的可以叫 .abc，会变成 data-abc, task函数参数传进来的数据, 
-                                .id (右边)数据里的字段服务器返回的数据里叫 id*/
-
-    li.textContent = task.title; // Set text inside <li>
-
+    // If task is completed, add 'checked' class
     if (task.done == 1) {
         li.classList.add('checked');
-        // classList.add() → Add a CSS class to element
-        // Result: <li class="checked">
     }
 
     // Create delete button
     var removeBtn = document.createElement('button');
-    removeBtn.className = 'close';           // Same as classList.add('close')
-    removeBtn.textContent = '×';             // Button shows × symbol
+    removeBtn.className = 'close';
+    removeBtn.textContent = '×';
     li.appendChild(removeBtn);
-    // appendChild() → Put removeBtn inside li
-    // Result: <li>Buy milk<button class="close">×</button></li>
 
-    // Click li to toggle
+    // Click li to toggle (except clicking the delete button)
     li.addEventListener('click', function(ev) {
-        // addEventListener('click', ...) → Run this function when clicked
-        // ev = event object, contains info about what happened
-
         if (ev.target === removeBtn) {
-            // ev.target → The exact element user clicked
-            // If user clicked the × button, don't toggle, just return
             return;
         }
         toggleTask(task.id);
@@ -48,10 +35,9 @@ function createTaskElement(task) {
 
     // Double-click to edit
     li.addEventListener('dblclick', function() {
-        // 'dblclick' → Double click event (click twice fast)
-
         var oldTitle = task.title;
 
+        // Create input box
         var editInput = document.createElement('input');
         editInput.type = 'text';
         editInput.value = oldTitle;
@@ -60,37 +46,33 @@ function createTaskElement(task) {
         editInput.style.border = 'none';
         editInput.style.outline = 'none';
 
-        li.textContent = '';                 // Clear all text in <li>
-        li.appendChild(editInput);           // Put input box in <li>
+        // Replace text with input
+        li.textContent = '';
+        li.appendChild(editInput);
         editInput.focus();
-        // focus() → Auto click into the input box, ready to type
 
+        // Save function
         function save() {
             var newTitle = editInput.value.trim();
-            // .trim() → Remove spaces from start and end
-            // "  hello  ".trim() → "hello"
 
             if (newTitle && newTitle !== oldTitle) {
-                // newTitle → true if not empty string
-                // !== → "not equal to"
                 task.title = newTitle;
                 li.textContent = newTitle;
-                li.appendChild(removeBtn);   // Add back the × button
+                li.appendChild(removeBtn);
                 updateTask(task.id, newTitle);
             } else {
-                li.textContent = oldTitle;   // Restore old title
+                li.textContent = oldTitle;
                 li.appendChild(removeBtn);
             }
         }
 
+        // When input loses focus, save
         editInput.addEventListener('blur', save);
-        // 'blur' → When input loses focus (click outside)
 
+        // When press Enter, trigger blur
         editInput.addEventListener('keydown', function(ev) {
-            // 'keydown' → When any key is pressed
             if (ev.key === 'Enter') {
                 editInput.blur();
-                // blur() → Make input lose focus → triggers 'blur' event → calls save()
             }
         });
     });
@@ -98,71 +80,50 @@ function createTaskElement(task) {
     return li;
 }
 
-// Press Enter to add   
+//  Load tasks from server 
 function loadTasks(showAll) {
     fetch('list.php?action=list')
-    // fetch() → Send HTTP request to server
-    // Same as typing "list.php?action=list" in browser address bar
-
         .then(function(res) {
-            // .then() → "When fetch finishes, do this"
-            // res = response from server
-
             return res.json();
-            // res.json() → Convert response text to JavaScript object
-            // '{"id":1}' → {id: 1}
         })
-
         .then(function(items) {
-            // Second .then() → "When res.json() finishes, do this"
-            // items = array of tasks: [{id:1, title:"...", done:0}, ...]
-
+            // Clear the list
             list.innerHTML = '';
-            // innerHTML = '' → Delete all children inside <ul>
 
+            // Decide which items to show
             var displayItems;
             if (showAll) {
                 displayItems = items;
             } else {
                 displayItems = items.slice(0, 6);
-                // slice(0, 6) → Get first 6 items
-                // [a,b,c,d,e,f,g,h].slice(0,6) → [a,b,c,d,e,f]
             }
 
+            // Loop through each task
             for (var i = 0; i < displayItems.length; i++) {
                 var task = displayItems[i];
                 var li = createTaskElement(task);
                 list.appendChild(li);
             }
 
+            // Show or hide "Show All" button
             var showAllBtn = document.querySelector('#show-all-btn');
             if (items.length > 6 && !showAll) {
-                // !showAll → "not showAll" → true if showAll is false
-                showAllBtn.style.display = 'block';  // Show button
+                showAllBtn.style.display = 'block';
             } else {
-                showAllBtn.style.display = 'none';   // Hide button
+                showAllBtn.style.display = 'none';
             }
         });
 }
 
-// Press Enter to add   
+// Add a new task
 function addTask(title) {
     fetch('list.php?action=add', {
         method: 'POST',
-        // POST → Send data to server (hidden in request body)
-        // GET → Send data in URL (visible: ?title=xxx)
-
         headers: { 'Content-Type': 'application/json' },
-        // Tell server: "I'm sending JSON format data"
-
         body: JSON.stringify({ title: title })
-        // JSON.stringify() → Convert JS object to JSON string
-        // { title: "Buy milk" } → '{"title":"Buy milk"}'
     })
     .then(function(res) {
         if (!res.ok) {
-            // res.ok → true if status is 200-299 (success)
-            // !res.ok → Request failed
             alert('Failed to add task');
             return null;
         }
@@ -172,36 +133,26 @@ function addTask(title) {
         if (task) {
             var li = createTaskElement(task);
             list.prepend(li);
-            // prepend() → Add to the BEGINNING of list
-            // appendChild() → Add to the END of list
         }
     });
 }
 
-// Press Enter to add   
+//  Delete a task 
 function deleteTask(id) {
     fetch('list.php?action=delete&id=' + encodeURIComponent(id))
-    // encodeURIComponent() → Make special characters safe for URL
-    // "hello world" → "hello%20world"
-    // Usually not needed for numbers, but good practice
-
         .then(function(res) {
             if (!res.ok) {
                 alert('Failed to delete');
                 return;
             }
-
             var li = list.querySelector('li[data-id="' + id + '"]');
-            // querySelector('li[data-id="5"]') → Find <li data-id="5">
-
             if (li) {
                 li.remove();
-                // remove() → Delete this element from page
             }
         });
 }
 
-// Press Enter to add   
+//  Toggle task done/undone 
 function toggleTask(id) {
     fetch('list.php?action=toggle&id=' + encodeURIComponent(id))
         .then(function(res) {
@@ -209,17 +160,14 @@ function toggleTask(id) {
                 alert('Failed to update');
                 return;
             }
-
             var li = list.querySelector('li[data-id="' + id + '"]');
             if (li) {
                 li.classList.toggle('checked');
-                // classList.toggle() → If has class, remove it; if not, add it
-                // Like a light switch: on → off → on → off
             }
         });
 }
 
-// Press Enter to add   
+//  Update task title 
 function updateTask(id, title) {
     fetch('list.php?action=update&id=' + encodeURIComponent(id), {
         method: 'POST',
@@ -233,40 +181,28 @@ function updateTask(id, title) {
     });
 }
 
-// Click "Add" button 
+//  Click "Add" button 
 addBtn.addEventListener('click', function() {
     var title = input.value.trim();
-    // input.value → Get text user typed in input box
 
     if (!title) {
-        // !title → true if title is empty string ""
-        // Empty string is "falsy" in JavaScript
         alert('Please type something first');
         return;
-        // return → Stop here, don't run code below
     }
 
     addTask(title);
-    input.value = '';                        // Clear the input box
-    input.focus();                           // Focus back to input box
+    input.value = '';
+    input.focus();
 });
 
-// Press Enter to add   
+//  Press Enter to add 
 input.addEventListener('keydown', function(ev) {
     if (ev.key === 'Enter') {
-        // ev.key → Which key was pressed
-        // 'Enter', 'Escape', 'a', 'b', etc.
-
         addBtn.click();
-        // click() → Simulate clicking the button
     }
 });
 
-// When page loads
+//  When page loads 
 document.addEventListener('DOMContentLoaded', function() {
-    // 'DOMContentLoaded' → When HTML is fully loaded
-    // This makes sure all elements exist before we use them
-
     loadTasks(false);
-    // false → Don't show all, only show first 6
 });
