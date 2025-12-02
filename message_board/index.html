@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Message Board</title>
+</head>
+<body>
+
+<h1>留言板</h1>
+
+<input type="text" id="msg" placeholder="写点什么..." />
+<button onclick="sendMsg()">发送</button>
+
+<h2>历史留言：</h2>
+<div id="list"></div>
+
+<script>
+async function sendMsg() {
+  let text = document.getElementById("msg").value;
+
+  let response = await fetch("save.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: text })
+  });
+
+  let result = await response.json();
+  alert(result.msg);
+
+  loadList(); // 重新加载留言
+}
+
+async function loadList() {
+  let response = await fetch("list.php");
+  let data = await response.json();
+
+  let html = "";
+  for (let item of data) {
+    html += `<p>${item}</p>`;
+  }
+  document.getElementById("list").innerHTML = html;
+}
+
+// 初始时加载留言
+loadList();
+</script>
+
+</body>
+</html>

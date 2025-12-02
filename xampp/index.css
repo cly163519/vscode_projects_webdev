@@ -1,0 +1,112 @@
+#sidebar{
+	width: 200px;
+	height: 200px;
+	
+	float: left;
+	background: blue;
+	overflow: scroll;
+}
+
+h1{
+	text-align: center;
+	background-color: brown;
+	color: white;
+	/*position: fixed;*/
+	
+}
+
+p:hover{
+	color: gold;
+	font-size: 200%;
+	
+}
+
+a:link {
+  background-color: gold;
+  color: green;
+}
+
+a.click{
+	
+}
+
+a > em {
+	font-size: calc(100% + 20px);
+}
+
+body{
+	background-color: yellow;
+}
+
+table{
+	border-collapse: collapse;
+	border: 2px solid rgb(140 140 140);
+	font-family: sans-serif;
+	font-size: 0.8 rem;
+	letter-spacing: 1px;
+}
+
+caption{
+	caption-side: bottom;
+	padding: 10px;
+	font-weight: bold;
+}
+
+thead{
+	background-color: rgb(228 240 245);
+}
+
+th,
+td{
+	border: 1px dashed rgb(160 160 160);
+	padding: 8px 10px;
+}
+
+td:last-of-type{
+	text-align: center;
+}
+ tbody > tr:nth-of-type(even){
+	background-color: rgb(237 238 242);
+ }
+ 
+ .grid_sample {
+ 	display: grid;
+ 	/*display: flex;*/
+ 	dgrid-template-columns: 200px 1fr;
+ 	grid-template: "header header"
+ 				   "sidebar main"
+ 				   "sidebar other"
+ 				    / 200px 1fr;
+ 	
+ 	header {
+ 		/*grid-row-start: 1;
+ 		grid-row-end: 3;*/
+ 		grid-area: header;
+ 		background-color: #eee;
+ 		xwidth: 200px;
+ 		text-align: center;
+ 	}
+ 	
+ 	main {
+ 		/*grid-row: 2;
+ 		grid-column: 2;*/
+ 		grid-area: main;
+ 		background-color: #ddf;
+ 		flex: 2;
+ 	}
+ 	
+ 	#side-bar {
+ 		background-color: #fcc;
+ 		grid-area: sidebar;
+ 		flex: 1;
+ 	}
+ }
+ 
+/* @keyframes blink { from { opacity: 1; } 33% { opacity: 0; } 66% { opacity: 1;} }
+ 
+ body { animation: blink 2s infinite; }*/
+ 
+ @media screen (max-width: 1000px) {
+ 	
+ }
+ 

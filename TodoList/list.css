@@ -1,0 +1,123 @@
+/* TodoList/list.css */
+/* Reset default styles */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI";
+    background: rgb(243, 235, 235);
+}
+
+/* Outer container */
+.todo-app {
+    max-width: 580px;
+    margin: 40px auto;
+    background: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Style the list */
+.todo-list li{
+    position: relative;
+    padding: 12px 48px 12px 40px;
+    background: #eee;
+    font-size: 18px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    /* Prevent text selection, Compatible with all browsers */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+
+/* Style odd list items differently */
+.todo-list li:nth-child(odd) {
+    background: white;
+}
+
+/* Style list items on hover */
+.todo-list li:hover {
+    background: #ddd;
+}
+
+/* Style checked list items */
+.todo-list li.checked {
+    background: #888;
+    color: #fff;
+    text-decoration: line-through;
+}
+
+
+/* Style the close button */
+.close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 16px 18px 16px 18px;
+    border: none; 
+    outline: none;
+    background: none;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+/* Style the close button on hover */
+.close:hover {
+    background-color: rgb(79, 79, 247);
+    color: white;
+}
+
+/* Style the header */
+.todo-header {
+    background-color: rgb(116, 116, 249);
+    padding: 24px 28px 18px;
+    color: white;
+    text-align: center;
+}
+
+.todo-header h1 {
+    font-size: 24px;
+    margin-bottom: 12px;
+}
+
+/* Style the input field */
+.todo-input-row{
+    display: flex;
+    gap: 8px;
+}
+
+#task-input {
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: none;
+    font-size: 16px;
+    outline: none;
+}
+
+/* Style the add button */
+#add-btn{
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    background: rgb(151, 163, 250);
+    color: rgb(255, 254, 254);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+/* Style the add button */
+#add-btn:hover {
+    background-color: #5a7bfd;
+}
+
